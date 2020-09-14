@@ -1,11 +1,39 @@
+import pandas as pd
+
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
+
+
+class City:
+
+    """
+    Base class for Cities
+
+    Attributes:
+    :var name: str
+    :var lat: float
+    :var lon: float
+    """
+
+    #  Class Variables
+
+    name = None
+    lat = None
+    lon = None
+
+    def __init__(self, name, lat, lon):
+        self.name = name
+        self.lat = lat
+        self.lon = lon
+
+    def __repr__(self):
+        return f"<City: {self.name}, {self.lat}, {self.lon}>"
 
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
 #
-# In the body of the `cityreader` function, use Python's built-in "csv" module 
+# In the body of the `cityreader` function, use Python's built-in "csv" module
 # to read this file so that each record is imported into a City instance. Then
 # return the list with all the City instances from the function.
 # Google "python 3 csv" for references and use your Google-fu for other examples.
@@ -16,12 +44,19 @@
 # should not be loaded into a City object.
 cities = []
 
+
 def cityreader(cities=[]):
+    df = pd.read_csv('cities.csv')
+
+    for i in range(len(df['city'])):
+        city = City(df['city'][i], df['lat'][i], df['lng'][i])
+        cities.append(city)
+
   # TODO Implement the functionality to read from the 'cities.csv' file
   # Ensure that the lat and lon valuse are all floats
-  # For each city record, create a new City instance and add it to the 
+  # For each city record, create a new City instance and add it to the
   # `cities` list
-    
+
     return cities
 
 cityreader(cities)
@@ -33,7 +68,7 @@ for c in cities:
 # STRETCH GOAL!
 #
 # Allow the user to input two points, each specified by latitude and longitude.
-# These points form the corners of a lat/lon square. Pass these latitude and 
+# These points form the corners of a lat/lon square. Pass these latitude and
 # longitude values as parameters to the `cityreader_stretch` function, along
 # with the `cities` list that holds all the City instances from the `cityreader`
 # function. This function should output all the cities that fall within the 
@@ -62,10 +97,43 @@ for c in cities:
 # TODO Get latitude and longitude values from the user
 
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
+    
   # within will hold the cities that fall within the specified region
-  within = []
-  
-  # Go through each city and check to see if it falls within 
+    within = []
+
+    lat1 = float(lat1)
+
+    lon1 = float(lon1)
+
+    lat2 = float(lat2)
+
+    lon2 = float(lon2)
+
+    df = pd.read_csv('cities.csv')
+
+    if lat1 < lat2:
+        df = df[df['lat'].between(lat1, lat2)]
+    else:
+        df = df[df['lat'].between(lat2, lat1)]
+    if lon1 < lon2:
+        df = df[df['lng'].between(lon1, lon2)]
+    else:
+        df = df[df['lng'].between(lon2, lon1)]
+            
+    within_cities = df['city']
+
+    within_lats = df['lat']
+
+    within_lons = df['lng']
+
+    within_city_list = list(zip(within_cities, within_lats, within_lons))
+
+    num = 0
+    for i in range(len(within_city_list)):
+        new_city = City(within_city_list[i][num], within_city_list[i][num+1], within_city_list[i][num+2])
+        within.append(new_city)
+
+  # Go through each city and check to see if it falls within
   # the specified coordinates.
 
-  return within
+    return within
