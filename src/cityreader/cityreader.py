@@ -97,10 +97,43 @@ for c in cities:
 # TODO Get latitude and longitude values from the user
 
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
+    
   # within will hold the cities that fall within the specified region
-  within = []
-  
-  # Go through each city and check to see if it falls within 
+    within = []
+
+    lat1 = float(lat1)
+
+    lon1 = float(lon1)
+
+    lat2 = float(lat2)
+
+    lon2 = float(lon2)
+
+    df = pd.read_csv('cities.csv')
+
+    if lat1 < lat2:
+        df = df[df['lat'].between(lat1, lat2)]
+    else:
+        df = df[df['lat'].between(lat2, lat1)]
+    if lon1 < lon2:
+        df = df[df['lng'].between(lon1, lon2)]
+    else:
+        df = df[df['lng'].between(lon2, lon1)]
+            
+    within_cities = df['city']
+
+    within_lats = df['lat']
+
+    within_lons = df['lng']
+
+    within_city_list = list(zip(within_cities, within_lats, within_lons))
+
+    num = 0
+    for i in range(len(within_city_list)):
+        new_city = City(within_city_list[i][num], within_city_list[i][num+1], within_city_list[i][num+2])
+        within.append(new_city)
+
+  # Go through each city and check to see if it falls within
   # the specified coordinates.
 
-  return within
+    return within
